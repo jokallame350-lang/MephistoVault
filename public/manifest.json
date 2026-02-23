@@ -1,0 +1,23 @@
+{
+    "name": "MephistoVault",
+    "short_name": "Vault",
+    "description": "Zero-trace, E2E encrypted peer-to-peer file transfer for professionals.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#050505",
+    "theme_color": "#050505",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/vite.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "utilities",
+        "security",
+        "productivity"
+    ]
+}
