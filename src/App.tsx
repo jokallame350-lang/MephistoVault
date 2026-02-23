@@ -458,16 +458,32 @@ function App() {
     setConnTime(0);
     setSelfDestructSec(0);
     setPeerCount(0);
-    setShareCode('');
+    // Don't clear shareCode here — it breaks the send mode display
     multiConnsRef.current.forEach(c => { try { c.close(); } catch { /* ignore */ } });
     multiConnsRef.current = [];
     if (selfDestructRef.current) { clearInterval(selfDestructRef.current); selfDestructRef.current = null; }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(shareCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareCode);
+      } else {
+        // Fallback for non-HTTPS
+        const ta = document.createElement('textarea');
+        ta.value = shareCode;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -1078,7 +1094,7 @@ function App() {
                 <h2 className="text-white font-bold flex items-center gap-2">
                   <Upload className="w-4 h-4 text-emerald-500" /> {t('sendTitle')}
                 </h2>
-                <button onClick={() => setMode('idle')} className="text-slate-400 hover:text-white p-1 rounded-md hover:bg-white/10 transition-colors">
+                <button onClick={() => { setShareCode(''); setFileToShare(null); resetConnection(); setMode('idle'); }} className="text-slate-400 hover:text-white p-1 rounded-md hover:bg-white/10 transition-colors">
                   <X className="w-4 h-4" />
                 </button>
               </div>
